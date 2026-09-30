@@ -45,6 +45,16 @@ python tools/build.py --site
 
 `tools/template.html` 是页面骨架（样式 + 交互），数据用占位符 `__BOOK_DATA__` 注入。
 
+改完页面后同步到 GitHub：
+
+```bash
+python tools/publish.py            # 上传默认清单
+python tools/publish.py index.html # 只传改动的那个文件
+```
+
+`publish.py` 走 GitHub Contents API，专门给 `git push` 被网络环境挡住的情况备用
+（脚本会自动取 `gh auth token`，也可用 `GITHUB_TOKEN` 指定）。
+
 ## 来源与授权
 
 - 原书由 [eternity4719/HowToLiveBetter](https://github.com/eternity4719/HowToLiveBetter) 维护，内容为 **Unlicense（公有领域）**
