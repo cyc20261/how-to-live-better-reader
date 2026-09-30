@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<meta name="theme-color" content="#ffffff">
 <title>高性价比人生指南 · 阅读器</title>
 <style>
   *{box-sizing:border-box}
@@ -11,7 +14,9 @@
     --t1:#1f1f1f; --t2:#4a4a4a; --t3:#8a8a8a; --brand:#3451b2; --mark:#fde68a;
     --fs:16px;
   }
-  html{-webkit-text-size-adjust:100%}
+  /* 强制保持浅色：部分手机浏览器（尤其深色模式下）会自动把未声明 color-scheme 的页面调暗 */
+  :root{color-scheme:light;color-scheme:light only}
+  html{background:#fff;-webkit-text-size-adjust:100%}
   html,body{margin:0}
   body{background:var(--bg);color:var(--t1);overflow-x:hidden;
     font:var(--fs)/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
