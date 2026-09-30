@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>高性价比人生指南 · 阅读器</title>
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --bg:#ffffff; --bg2:#fafafa; --line:#e5e5e5; --line2:#f0f0f0;
+    --t1:#1f1f1f; --t2:#4a4a4a; --t3:#8a8a8a; --brand:#3451b2; --mark:#fde68a;
+    --fs:16px;
+  }
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--t1);
+    font:var(--fs)/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--brand);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* 顶栏 */
+  .top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+    height:52px;padding:0 18px;background:var(--bg);border-bottom:1px solid var(--line)}
+  .top .tt{font-weight:600;font-size:15px;white-space:nowrap}
+  .top .sep{color:var(--line);}
+  .top .ct{font-size:13px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .grow{flex:1}
+  .btn{height:30px;padding:0 10px;border:1px solid var(--line);background:var(--bg);color:var(--t2);
+    font:inherit;font-size:13px;cursor:pointer;border-radius:4px}
+  .btn:hover{border-color:#c9c9c9;color:var(--t1)}
+  .btn:disabled{color:#c7c7c7;cursor:default;border-color:var(--line2)}
+  #q{height:30px;width:220px;padding:0 10px;border:1px solid var(--line);border-radius:4px;
+    background:var(--bg);color:var(--t1);font:inherit;font-size:13px}
+  #q:focus{outline:none;border-color:var(--brand)}
+
+  /* 导出菜单 */
+  .menu{position:relative;display:inline-block}
+  .menu .mbody{display:none;position:absolute;right:0;top:34px;z-index:40;min-width:230px;
+    background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:4px}
+  .menu.open .mbody{display:block}
+  .menu .mbody a{display:block;padding:7px 10px;font-size:13px;color:var(--t2);line-height:1.5}
+  .menu .mbody a:hover{background:#f4f4f5;text-decoration:none;color:var(--t1)}
+  .menu .mbody .hint{display:block;font-size:11.5px;color:var(--t3)}
+
+  /* 布局 */
+  .wrap{display:flex;align-items:flex-start;min-height:calc(100% - 52px)}
+  nav{position:sticky;top:52px;width:250px;flex:none;height:calc(100vh - 52px);overflow:auto;
+    border-right:1px solid var(--line);padding:14px 0 40px;background:var(--bg2)}
+  nav .gt{font-size:12px;color:var(--t3);padding:10px 18px 6px;letter-spacing:.04em}
+  nav a{display:block;padding:5px 18px 5px 18px;font-size:13.5px;color:var(--t2);
+    border-left:2px solid transparent;line-height:1.5}
+  nav a:hover{background:#f1f1f1;text-decoration:none}
+  nav a.on{color:var(--brand);border-left-color:var(--brand);background:#fff;font-weight:600}
+  nav a i{display:inline-block;width:22px;color:var(--t3);font-style:normal;font-size:12px}
+  nav a.on i{color:var(--brand)}
+
+  main{flex:1;min-width:0;padding:34px 40px 120px;display:flex;justify-content:center}
+  .col{width:100%;max-width:760px}
+
+  /* 章节头 */
+  .ch-h{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:6px}
+  .ch-h h1{font-size:24px;line-height:1.4;margin:0 0 8px;font-weight:700;letter-spacing:-.01em}
+  .ch-h .meta{font-size:13px;color:var(--t3)}
+  .intro{color:var(--t2);font-size:14.5px;margin:18px 0 8px;padding:14px 16px;
+    background:var(--bg2);border-left:2px solid var(--line)}
+
+  /* 条目 */
+  .item{padding:22px 0;border-bottom:1px solid var(--line2)}
+  .item .h{display:flex;gap:10px;align-items:baseline}
+  .item .n{flex:none;color:var(--t3);font-size:13px;font-variant-numeric:tabular-nums;min-width:20px}
+  .item h3{margin:0;font-size:16.5px;font-weight:600;line-height:1.6}
+  .tags{margin:6px 0 0 30px;font-size:12px;color:var(--t3)}
+  .tags span{margin-right:10px}
+  .tags b{font-weight:600;color:var(--t2)}
+  .plain{margin:10px 0 0 30px;color:var(--t1)}
+  .f{margin:8px 0 0 30px;font-size:14.5px;color:var(--t2)}
+  .f .k{display:inline-block;min-width:44px;color:var(--t3);font-size:12.5px;vertical-align:top}
+  .f .v{display:inline-block;width:calc(100% - 50px);vertical-align:top}
+  .f.note .v{color:var(--t3);font-size:13.5px}
+  details{margin:10px 0 0 30px}
+  summary{cursor:pointer;font-size:13px;color:var(--t3)}
+  summary:hover{color:var(--brand)}
+  .sbody{margin-top:6px;font-size:12.5px;color:var(--t3);line-height:1.7;word-break:break-all}
+  mark{background:var(--mark);color:inherit}
+
+  /* 章节底部导航 */
+  .chnav{display:flex;gap:10px;margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}
+  .chnav .btn{height:34px;font-size:14px}
+
+  /* 搜索结果 */
+  .res{padding:22px 0;border-bottom:1px solid var(--line2)}
+  .res .rt{font-size:15px;font-weight:600}
+  .res .rm{font-size:12px;color:var(--t3);margin-top:2px}
+  .res .rp{margin-top:6px;font-size:14px;color:var(--t2)}
+  .empty{padding:60px 0;color:var(--t3);text-align:center}
+
+  /* 窄屏：目录收成抽屉 */
+  #tocbtn{display:none}
+  @media (max-width:820px){
+    #tocbtn{display:inline-block}
+    nav{position:fixed;left:0;top:52px;z-index:25;width:78vw;max-width:300px;
+      background:#fff;box-shadow:0 0 0 100vmax rgba(0,0,0,.28);
+      transform:translateX(-102%);transition:transform .18s ease}
+    nav.open{transform:none}
+    main{padding:22px 18px 90px}
+    #q{width:120px}
+    .top .ct{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <span class="tt">高性价比人生指南</span>
+  <span class="sep">/</span>
+  <span class="ct" id="ct"></span>
+  <span class="grow"></span>
+  <select id="jump" class="btn" aria-label="跳到某一章"></select>
+  <input id="q" type="search" placeholder="搜索（Enter 全书查找）" autocomplete="off">
+  <button class="btn" id="sm">A-</button>
+  <button class="btn" id="sp">A+</button>
+  <div class="menu" id="menu">
+    <button class="btn" id="exp">导出 ▾</button>
+    <div class="mbody">
+      <a href="#" data-x="html">网页单文件 .html<span class="hint">双击即开、可离线、可转发</span></a>
+      <a href="#" data-x="md">Markdown .md<span class="hint">纯文本，方便二次编辑</span></a>
+      <a href="#" data-x="json">结构化数据 .json<span class="hint">拿去做自己的应用</span></a>
+    </div>
+  </div>
+  <button class="btn" id="tocbtn">目录</button>
+  <button class="btn" id="prev">上一章</button>
+  <button class="btn" id="next">下一章</button>
+</header>
+
+<div class="wrap">
+  <nav id="nav"></nav>
+  <main><div class="col" id="col"></div></main>
+</div>
+
+<script>window.BOOK=__BOOK_DATA__;</script>
+<script>
+(function(){
+  var B = window.BOOK, nav = document.getElementById('nav'), col = document.getElementById('col'),
+      ct = document.getElementById('ct'), q = document.getElementById('q');
+  var cur = 0, fs = 16, mode = 'ch';
+
+  // 目录
+  var html = '<div class="gt">全书 ' + B.length + ' 章 · ' +
+    B.reduce(function(a,b){return a+b.items.length},0) + ' 条</div>';
+  B.forEach(function(c,i){
+    html += '<a href="#" data-i="'+i+'"><i>'+(i+1)+'</i>'+esc(c.title.replace(/^\d+\.\s*/,''))+'</a>';
+  });
+  nav.innerHTML = html;
+  var jm = '';
+  B.forEach(function(c,i){ jm += '<option value="'+i+'">'+esc(c.title)+'</option>'; });
+  var jump = document.getElementById('jump');
+  jump.innerHTML = jm;
+  jump.onchange = function(){ go(+jump.value); };
+  nav.addEventListener('click', function(e){
+    var a = e.target.closest('a'); if(!a) return;
+    e.preventDefault(); go(+a.dataset.i);
+  });
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+  function itemHTML(c, it, ci){
+    var s = '<div class="item" id="'+it.id+'">';
+    s += '<div class="h"><span class="n">'+it.num+'</span><h3>'+esc(it.title)+'</h3></div>';
+    var tg = [];
+    if(it.grade) tg.push('证据 <b>'+it.grade+' 级</b>');
+    if(it.ratio) tg.push('性价比 <b>'+it.ratio+'</b>');
+    if(tg.length) s += '<div class="tags">'+tg.join('<span>')+'</div>';
+    if(it.plain) s += '<p class="plain">'+esc(it.plain)+'</p>';
+    (it.fields||[]).forEach(function(f){
+      s += '<div class="f'+(f.k==='备注'?' note':'')+'"><span class="k">'+esc(f.k)+
+           '</span><span class="v">'+esc(f.v)+'</span></div>';
+    });
+    if(it.src) s += '<details><summary>'+esc(it.srcSummary||'来源')+
+      '</summary><div class="sbody">'+it.src+'</div></details>';
+    return s + '</div>';
+  }
+
+  function render(){
+    var c = B[cur];
+    ct.textContent = c.title;
+    document.title = c.title + ' · 高性价比人生指南';
+    var h = '<div class="ch-h"><h1>'+esc(c.title)+'</h1><div class="meta">共 '+
+      c.items.length+' 条</div></div>';
+    if(c.intro) h += '<div class="intro">'+esc(c.intro)+'</div>';
+    c.items.forEach(function(it){ h += itemHTML(c,it,cur); });
+    h += '<div class="chnav"><button class="btn" data-p="1"'+(cur===0?' disabled':'')+
+      '>上一章</button><button class="btn" data-n="1"'+(cur===B.length-1?' disabled':'')+
+      '>下一章</button></div>';
+    col.innerHTML = h;
+    document.getElementById('prev').disabled = cur===0;
+    document.getElementById('next').disabled = cur===B.length-1;
+    [].forEach.call(nav.querySelectorAll('a'), function(a,i){
+      a.classList.toggle('on', i===cur);
+    });
+    jump.value = cur;
+    nav.classList.remove('open');
+    window.scrollTo(0,0);
+  }
+
+  function go(i){ cur = Math.max(0, Math.min(B.length-1, i)); mode='ch';
+    try{localStorage.setItem('htlb.ch', cur);}catch(e){}
+    render(); }
+
+  function search(kw){
+    kw = kw.trim().toLowerCase();
+    if(!kw){ mode='ch'; render(); return; }
+    mode='search';
+    var out = [], n = 0;
+    B.forEach(function(c,ci){
+      c.items.forEach(function(it){
+        var hay = (it.title+' '+(it.plain||'')).toLowerCase();
+        if(hay.indexOf(kw) >= 0){ out.push({c:c, it:it, ci:ci}); n++; }
+      });
+    });
+    ct.textContent = '搜索「'+kw+'」· '+n+' 条';
+    var h = '<div class="ch-h"><h1>搜索结果</h1><div class="meta">「'+esc(kw)+'」· 共 '+n+' 条</div></div>';
+    if(!n) h += '<div class="empty">没有匹配的条目</div>';
+    out.slice(0,300).forEach(function(r){
+      h += '<div class="res"><a href="#" data-jump="'+r.ci+'|'+r.it.id+'"><span class="rt">'+
+        esc(r.it.title)+'</span></a><div class="rm">第 '+(r.ci+1)+' 章 · '+esc(r.c.title)+
+        ' · 第 '+r.it.num+' 条</div><div class="rp">'+esc((r.it.plain||'').slice(0,140))+
+        '…</div></div>';
+    });
+    col.innerHTML = h;
+    window.scrollTo(0,0);
+  }
+
+  col.addEventListener('click', function(e){
+    var a = e.target.closest('a[data-jump]');
+    if(a){
+      e.preventDefault();
+      var p = a.dataset.jump.split('|');
+      q.value = ''; go(+p[0]);
+      var el = document.getElementById(p[1]);
+      if(el){ el.scrollIntoView(); el.style.background = '#fffbeb';
+        setTimeout(function(){el.style.background='';}, 1600); }
+      return;
+    }
+    var b = e.target.closest('button');
+    if(b && b.dataset.p) go(cur-1);
+    if(b && b.dataset.n) go(cur+1);
+  });
+
+  /* ---------- 导出 ---------- */
+  function dl(name, text, mime){
+    var blob = new Blob([text], {type: mime + ';charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 1000);
+  }
+  function mdLink(s){
+    return s.replace(/<a [^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g, function(m0, u, t){
+      return '[' + t + '](' + u + ')';
+    });
+  }
+  function toMarkdown(){
+    var out = '# 高性价比人生指南\n\n全书 ' + B.length + ' 章 · ' +
+      B.reduce(function(a,b){return a+b.items.length;},0) + ' 条\n';
+    B.forEach(function(c){
+      out += '\n## ' + c.title + '\n\n';
+      if(c.intro) out += '> ' + c.intro + '\n\n';
+      c.items.forEach(function(it){
+        out += '### ' + it.num + '. ' + it.title + '\n\n';
+        var tg = [];
+        if(it.grade) tg.push('证据等级 ' + it.grade);
+        if(it.ratio) tg.push('性价比 ' + it.ratio);
+        if(tg.length) out += '`' + tg.join('` `') + '`\n\n';
+        if(it.plain) out += it.plain + '\n\n';
+        (it.fields || []).forEach(function(f){
+          out += '**' + f.k + '**：' + f.v + '\n\n';
+        });
+        if(it.src) out += mdLink(it.src) + '\n\n';
+      });
+    });
+    return out;
+  }
+  function doExport(kind){
+    if(kind === 'html'){
+      var clone = document.documentElement.cloneNode(true);
+      var cc = clone.querySelector('#col'); if(cc) cc.innerHTML = '';
+      var cn = clone.querySelector('#nav'); if(cn) cn.innerHTML = '';
+      var cm = clone.querySelector('#menu'); if(cm) cm.className = 'menu';
+      dl('高性价比人生指南.html', '<!DOCTYPE html>\n' + clone.outerHTML, 'text/html');
+    } else if(kind === 'md'){
+      dl('高性价比人生指南.md', toMarkdown(), 'text/markdown');
+    } else {
+      dl('高性价比人生指南.json', JSON.stringify(B), 'application/json');
+    }
+  }
+  var menu = document.getElementById('menu');
+  document.getElementById('exp').onclick = function(e){
+    e.stopPropagation(); menu.classList.toggle('open');
+  };
+  menu.querySelector('.mbody').addEventListener('click', function(e){
+    var a = e.target.closest('a[data-x]'); if(!a) return;
+    e.preventDefault(); menu.classList.remove('open'); doExport(a.dataset.x);
+  });
+  document.addEventListener('click', function(e){
+    if(!menu.contains(e.target)) menu.classList.remove('open');
+  });
+
+  document.getElementById('tocbtn').onclick = function(){ nav.classList.toggle('open'); };
+  nav.addEventListener('click', function(e){ if(e.target.tagName === 'A') nav.classList.remove('open'); });
+  document.getElementById('prev').onclick = function(){ go(cur-1); };
+  document.getElementById('next').onclick = function(){ go(cur+1); };
+  document.getElementById('sm').onclick = function(){ fs = Math.max(13, fs-1); applyFS(); };
+  document.getElementById('sp').onclick = function(){ fs = Math.min(21, fs+1); applyFS(); };
+  function applyFS(){ document.documentElement.style.setProperty('--fs', fs+'px');
+    try{localStorage.setItem('htlb.fs', fs);}catch(e){} }
+
+  q.addEventListener('input', function(){ if(mode==='ch' && !q.value.trim()) render(); });
+  q.addEventListener('keydown', function(e){
+    if(e.key === 'Enter') search(q.value);
+    if(e.key === 'Escape'){ q.value=''; go(cur); }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(document.activeElement === q) return;
+    if(e.key === 'ArrowLeft') go(cur-1);
+    if(e.key === 'ArrowRight') go(cur+1);
+    if(e.key === '/'){ e.preventDefault(); q.focus(); }
+  });
+
+  try{
+    var a = localStorage.getItem('htlb.fs'); if(a){ fs = +a; applyFS(); }
+    var b = localStorage.getItem('htlb.ch'); if(b){ cur = +b; }
+    var h = location.hash.replace('#','');
+    if(h){ for(var i=0;i<B.length;i++){ if(B[i].items.some(function(x){return x.id===h;})){ cur=i; break; } } }
+  }catch(e){}
+  render();
+  if(location.hash){ var el = document.getElementById(location.hash.replace('#','')); if(el) el.scrollIntoView(); }
+})();
+</script>
+</body>
+</html>
