@@ -5,6 +5,7 @@
 
 - **在线阅读：** https://cyc20261.github.io/how-to-live-better-reader/
 - **一键导出：** 页面右上角「导出 ▾」可以整站打包带走
+- **授权：** 正文为 CC BY 4.0（须署名），不是公有领域 —— 详见文末「授权与署名」
 
 ## 页面特性
 
@@ -55,8 +56,22 @@ python tools/publish.py index.html # 只传改动的那个文件
 `publish.py` 走 GitHub Contents API，专门给 `git push` 被网络环境挡住的情况备用
 （脚本会自动取 `gh auth token`，也可用 `GITHUB_TOKEN` 指定）。
 
-## 来源与授权
+## 授权与署名
 
-- 原书由 [eternity4719/HowToLiveBetter](https://github.com/eternity4719/HowToLiveBetter) 维护，内容为 **Unlicense（公有领域）**
-- 本仓库不是原书的 fork，不改动原书内容，只做「渲染成更好读的页面」这一件事
-- 本仓库的页面与脚本同样不做任何权利保留，见 `LICENSE`
+**正文内容不是公有领域，转载必须署名。** 本仓库的所有权声明分两层：
+
+| 范围 | 授权 | 文件 |
+| --- | --- | --- |
+| 书本正文内容（index.html 里的 34 章 631 条） | **CC BY 4.0**（须署名） | `LICENSE` |
+| tools/ 下的构建脚本与模板 | Unlicense（公有领域） | `LICENSE-CODE` |
+
+署名人（按 CC BY 4.0 要求保留）：
+
+> 《高性价比人生指南》，原作者见 [eternity4719/HowToLiveBetter](https://github.com/eternity4719/HowToLiveBetter)，
+> 采用 [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.zh-hans) 授权。
+> 本仓库在其内容基础上**调整了排版**（分章节、加检索与导出），未改动正文，原文数据与结论均照原样保留。
+
+读者在页面底部、导出的 Markdown 头部都能看到同样的署名与许可链接，所以从本仓库导出再转发也不需要额外再标注。
+
+> 说明：网络上流传的某些转载页把这本书标成「Unlicense / 公有领域」，这与上游仓库当前的 `LICENSE`（CC BY 4.0）**不一致**。
+> 本仓库按上游当前的正式声明来，宁可多标一层署名。
