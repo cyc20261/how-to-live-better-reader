@@ -11,16 +11,17 @@
     --t1:#1f1f1f; --t2:#4a4a4a; --t3:#8a8a8a; --brand:#3451b2; --mark:#fde68a;
     --fs:16px;
   }
-  html,body{margin:0;height:100%}
-  body{background:var(--bg);color:var(--t1);
+  html{-webkit-text-size-adjust:100%}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--t1);overflow-x:hidden;
     font:var(--fs)/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     -webkit-font-smoothing:antialiased}
   a{color:var(--brand);text-decoration:none}
   a:hover{text-decoration:underline}
 
   /* 顶栏 */
-  .top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
-    height:52px;padding:0 18px;background:var(--bg);border-bottom:1px solid var(--line)}
+  .top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    min-height:52px;padding:6px 18px;background:var(--bg);border-bottom:1px solid var(--line)}
   .top .tt{font-weight:600;font-size:15px;white-space:nowrap}
   .top .sep{color:var(--line);}
   .top .ct{font-size:13px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -43,9 +44,10 @@
   .menu .mbody .hint{display:block;font-size:11.5px;color:var(--t3)}
 
   /* 布局 */
-  .wrap{display:flex;align-items:flex-start;min-height:calc(100% - 52px)}
-  nav{position:sticky;top:52px;width:250px;flex:none;height:calc(100vh - 52px);overflow:auto;
-    border-right:1px solid var(--line);padding:14px 0 40px;background:var(--bg2)}
+  .wrap{display:flex;align-items:flex-start}
+  nav{position:sticky;top:var(--bar,52px);width:250px;flex:none;height:calc(100vh - var(--bar,52px));
+    overflow:auto;-webkit-overflow-scrolling:touch;
+    border-right:1px solid var(--line);padding:14px 0 60px;background:var(--bg2)}
   nav .gt{font-size:12px;color:var(--t3);padding:10px 18px 6px;letter-spacing:.04em}
   nav a{display:block;padding:5px 18px 5px 18px;font-size:13.5px;color:var(--t2);
     border-left:2px solid transparent;line-height:1.5}
@@ -96,17 +98,52 @@
   .ft{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);
     font-size:12.5px;color:var(--t3);line-height:1.8}
 
-  /* 窄屏：目录收成抽屉 */
+  /* 手机：控制栏换行分区 + 抽屉目录 */
   #tocbtn{display:none}
   @media (max-width:820px){
-    #tocbtn{display:inline-block}
-    nav{position:fixed;left:0;top:52px;z-index:25;width:78vw;max-width:300px;
-      background:#fff;box-shadow:0 0 0 100vmax rgba(0,0,0,.28);
-      transform:translateX(-102%);transition:transform .18s ease}
+    /* 两行：上一行 目录/搜索/导出，下一行 跳章/翻页/字号；章节名在正文里已有，不再重复占位 */
+    .top{padding:8px 12px;gap:8px;row-gap:6px}
+    .top .tt,.top .sep,.top .ct,.grow{display:none}
+    #tocbtn{display:inline-block;order:1}
+    #q{order:2;flex:1 1 30%;width:auto;min-width:90px}
+    #menu{order:3}
+    #jump{order:4;flex:1 1 120px;min-width:110px;max-width:none}
+    #prev{order:5;flex:none}
+    #next{order:6;flex:none}
+    #sm{order:7;flex:none}
+    #sp{order:8;flex:none}
+    .btn,#q{height:34px;font-size:13.5px}
+    #prev,#next{padding:0 9px}
+    #sm,#sp{padding:0 10px}
+
+    .menu .mbody{position:fixed;left:8px;right:8px;top:calc(var(--bar,52px) + 4px);min-width:0;
+      max-height:70vh;overflow:auto;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+    .menu .mbody a{padding:13px 12px;font-size:15px}
+
+    nav{position:fixed;left:0;top:var(--bar,52px);z-index:25;width:80vw;max-width:320px;
+      height:calc(100vh - var(--bar,52px));background:#fff;box-shadow:0 0 0 100vmax rgba(0,0,0,.3);
+      transform:translateX(-102%);transition:transform .18s ease;padding-bottom:calc(60px + env(safe-area-inset-bottom))}
     nav.open{transform:none}
-    main{padding:22px 18px 90px}
-    #q{width:120px}
-    .top .ct{display:none}
+    nav a{padding:11px 18px;font-size:14.5px}
+    nav .gt{padding:12px 18px 6px}
+
+    main{padding:20px 14px calc(80px + env(safe-area-inset-bottom))}
+    .ch-h h1{font-size:21px}
+    .intro{font-size:14px;padding:12px 14px}
+    .item{padding:18px 0}
+    .item h3{font-size:16px}
+    .plain,.f{margin-left:0}
+    .tags,details{margin-left:0}
+    .item .h{align-items:flex-start;gap:8px}
+    .item .n{padding-top:4px}
+    .f .k{min-width:40px}
+    .plain,.f .v,blockquote{overflow-wrap:anywhere;word-break:break-word}
+    .sbody{font-size:12px}
+    .chnav .btn{flex:1;height:44px}
+    .ft{font-size:12px}
+  }
+  @media (max-width:374px){
+    #jump{flex:1 1 100%;order:9}
   }
 </style>
 </head>
@@ -124,9 +161,10 @@
   <div class="menu" id="menu">
     <button class="btn" id="exp">导出 ▾</button>
     <div class="mbody">
-      <a href="#" data-x="html">网页单文件 .html<span class="hint">双击即开、可离线、可转发</span></a>
-      <a href="#" data-x="md">Markdown .md<span class="hint">纯文本，方便二次编辑</span></a>
-      <a href="#" data-x="json">结构化数据 .json<span class="hint">拿去做自己的应用</span></a>
+      <a href="#" data-x="zip">一键打包 .zip<span class="hint">推荐：网页 + Markdown + 数据 + 授权说明</span></a>
+      <a href="#" data-x="html">只拿网页 .html<span class="hint">双击即开、断网可读、直接转发</span></a>
+      <a href="#" data-x="md">只拿文本 .md<span class="hint">纯文字，便于复制改写、打印</span></a>
+      <a href="#" data-x="json">只拿数据 .json<span class="hint">字段化，拿去做自己的应用</span></a>
     </div>
   </div>
   <button class="btn" id="tocbtn">目录</button>
@@ -262,11 +300,81 @@
   /* ---------- 导出 ---------- */
   function dl(name, text, mime){
     var blob = new Blob([text], {type: mime + ';charset=utf-8'});
+    trigger(blob, name);
+  }
+  function trigger(blob, name){
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url; a.download = name; document.body.appendChild(a); a.click();
-    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 1000);
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 3000);
+    var b = document.getElementById('exp');
+    if(b){ b.textContent = '已下载 ✓'; setTimeout(function(){ b.textContent = '导出 ▾'; }, 1800); }
   }
+  /* --- 最小 ZIP 写入器（STORE，无压缩，依赖 CRC32） --- */
+  function crc32(u8){
+    var tbl = crc32.t;
+    if(!tbl){
+      tbl = crc32.t = new Uint32Array(256);
+      for(var n=0;n<256;n++){ var c=n; for(var k=0;k<8;k++) c = (c & 1) ? (0xEDB88320 ^ (c>>>1)) : (c>>>1); tbl[n]=c>>>0; }
+    }
+    var crc = 0xFFFFFFFF;
+    for(var i=0;i<u8.length;i++) crc = tbl[(crc ^ u8[i]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+  function makeZip(files){
+    var enc = new TextEncoder(), parts = [], central = [], offset = 0, cdSize = 0;
+    files.forEach(function(f){
+      var nb = enc.encode(f.name), db = enc.encode(f.text), crc = crc32(db);
+      var lh = new Uint8Array(30 + nb.length), v = new DataView(lh.buffer);
+      v.setUint32(0, 0x04034b50, true); v.setUint16(4, 20, true); v.setUint16(6, 0x0800, true);
+      v.setUint16(8, 0, true); v.setUint16(10, 0, true); v.setUint16(12, 0, true);
+      v.setUint32(14, crc, true); v.setUint32(18, db.length, true); v.setUint32(22, db.length, true);
+      v.setUint16(26, nb.length, true); v.setUint16(28, 0, true);
+      lh.set(nb, 30);
+      var ch = new Uint8Array(46 + nb.length), c = new DataView(ch.buffer);
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true);
+      c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true); c.setUint16(12, 0, true);
+      c.setUint16(14, 0, true);
+      c.setUint32(16, crc, true); c.setUint32(20, db.length, true); c.setUint32(24, db.length, true);
+      c.setUint16(28, nb.length, true); c.setUint16(30, 0, true); c.setUint16(32, 0, true);
+      c.setUint16(34, 0, true); c.setUint16(36, 0, true); c.setUint32(38, 0, true);
+      c.setUint32(42, offset, true);
+      ch.set(nb, 46);
+      parts.push(lh, db); central.push(ch);
+      offset += lh.length + db.length; cdSize += ch.length;
+    });
+    var end = new Uint8Array(22), e = new DataView(end.buffer);
+    e.setUint32(0, 0x06054b50, true); e.setUint16(4, 0, true); e.setUint16(6, 0, true);
+    e.setUint16(8, files.length, true); e.setUint16(10, files.length, true);
+    e.setUint32(12, cdSize, true); e.setUint32(16, offset, true); e.setUint16(20, 0, true);
+    return new Blob(parts.concat(central, [end]), {type: 'application/zip'});
+  }
+  function cleanPage(){
+    var clone = document.documentElement.cloneNode(true);
+    var cc = clone.querySelector('#col'); if(cc) cc.innerHTML = '';
+    var cn = clone.querySelector('#nav'); if(cn) cn.innerHTML = '';
+    var cm = clone.querySelector('#menu'); if(cm) cm.className = 'menu';
+    return '<!DOCTYPE html>\n' + clone.outerHTML;
+  }
+  var ATTR_NOTE =
+    '授权与署名\n' +
+    '--------------------------------\n' +
+    '正文内容来自《高性价比人生指南》，原作者见\n' +
+    '  https://github.com/eternity4719/HowToLiveBetter\n' +
+    '采用 CC BY 4.0（署名）授权：\n' +
+    '  https://creativecommons.org/licenses/by/4.0/deed.zh-hans\n\n' +
+    '可以自由复制、转发、改写、商用，条件是：\n' +
+    '  1) 保留原作者署名；\n' +
+    '  2) 附上上面的许可链接；\n' +
+    '  3) 说明是否改动（本包只调整了排版与格式，未改动正文）。\n\n' +
+    '注意：本书内容不是公有领域，转发时请不要删掉这段署名。\n';
+  var NOTE = '高性价比人生指南 · 离线包\n' +
+    '================================\n\n' +
+    '本包包含：\n' +
+    '  高性价比人生指南.html  —— 双击即可阅读，不需要联网，可直接转发给别人\n' +
+    '  高性价比人生指南.md    —— 纯文本版，方便复制、改写、打印\n' +
+    '  全书数据.json          —— 字段化数据（34 章 631 条），可拿去做自己的应用\n\n' +
+    ATTR_NOTE;
   function mdLink(s){
     return s.replace(/<a [^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g, function(m0, u, t){
       return '[' + t + '](' + u + ')';
@@ -297,13 +405,20 @@
     });
     return out;
   }
+  function todayStr(){
+    var d = new Date(), p = function(n){ return n < 10 ? '0' + n : '' + n; };
+    return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate());
+  }
   function doExport(kind){
-    if(kind === 'html'){
-      var clone = document.documentElement.cloneNode(true);
-      var cc = clone.querySelector('#col'); if(cc) cc.innerHTML = '';
-      var cn = clone.querySelector('#nav'); if(cn) cn.innerHTML = '';
-      var cm = clone.querySelector('#menu'); if(cm) cm.className = 'menu';
-      dl('高性价比人生指南.html', '<!DOCTYPE html>\n' + clone.outerHTML, 'text/html');
+    if(kind === 'zip'){
+      trigger(makeZip([
+        {name: '高性价比人生指南.html', text: cleanPage()},
+        {name: '高性价比人生指南.md', text: toMarkdown()},
+        {name: '全书数据.json', text: JSON.stringify(B)},
+        {name: '说明与授权.txt', text: NOTE}
+      ]), '高性价比人生指南-离线包-' + todayStr() + '.zip');
+    } else if(kind === 'html'){
+      dl('高性价比人生指南.html', cleanPage(), 'text/html');
     } else if(kind === 'md'){
       dl('高性价比人生指南.md', toMarkdown(), 'text/markdown');
     } else {
@@ -329,7 +444,8 @@
   document.getElementById('sm').onclick = function(){ fs = Math.max(13, fs-1); applyFS(); };
   document.getElementById('sp').onclick = function(){ fs = Math.min(21, fs+1); applyFS(); };
   function applyFS(){ document.documentElement.style.setProperty('--fs', fs+'px');
-    try{localStorage.setItem('htlb.fs', fs);}catch(e){} }
+    try{localStorage.setItem('htlb.fs', fs);}catch(e){}
+    setTimeout(syncBar, 0); }
 
   q.addEventListener('input', function(){ if(mode==='ch' && !q.value.trim()) render(); });
   q.addEventListener('keydown', function(e){
@@ -343,6 +459,14 @@
     if(e.key === 'ArrowRight') go(cur+1);
     if(e.key === '/'){ e.preventDefault(); q.focus(); }
   });
+
+  function syncBar(){
+    var h = document.querySelector('.top').offsetHeight || 52;
+    document.documentElement.style.setProperty('--bar', h + 'px');
+  }
+  window.addEventListener('resize', syncBar);
+  window.addEventListener('orientationchange', syncBar);
+  syncBar();
 
   try{
     var a = localStorage.getItem('htlb.fs'); if(a){ fs = +a; applyFS(); }
